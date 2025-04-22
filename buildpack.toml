@@ -1,0 +1,10 @@
+api = "0.5"
+
+[buildpack]
+id = "dreamfactory/df-cnb"
+version = "1.0.0"
+name = "DreamFactory CNB Buildpack"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
+

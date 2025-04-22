@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -e
+
+APP_DIR="/workspace"
+LAYERS_DIR="$2"
+ENV_DIR="$3"
+
+echo "==== DreamFactory CNB Buildpack ===="
+echo "Building DreamFactory in: $APP_DIR"
+
+# Перевірка, чи composer.json дійсно існує
+if [ ! -f "$APP_DIR/composer.json" ]; then
+  echo "❌ composer.json not found in $APP_DIR"
+  ls -la "$APP_DIR"
+  exit 1
+fi
+
+cd "$APP_DIR"
+
+echo "📦 Installing composer dependencies..."
+composer install --no-dev --optimize-autoloader
+
+# Створення launch процесу (мінімально — PHP web-server)
+mkdir -p "$LAYERS_DIR/launch"
+cat > "$LAYERS_DIR/launch/launch.toml" <<EOF
+[[processes]]
+type = "web"
+command = "php"
+args = ["-S", "0.0.0.0:8080", "-t", "public"]
+default = true
+EOF
+
+echo "✅ DreamFactory CNB Build Complete."
+
